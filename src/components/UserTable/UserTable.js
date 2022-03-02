@@ -11,7 +11,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import Button from "@mui/material/Button";
 // utils
-import {toggleSelectedItem} from "../../utils";
+import {removeSelectedItem, toggleSelectedItem} from "../../utils";
 // components
 import TableToolbar from "../TableToolbar";
 import TableHeader from "../TableHeader";
@@ -77,6 +77,20 @@ export default function UserTable(props) {
     props.onSetUser(user);
   };
 
+  const removeUsers = () => {
+    props.onRemoveUser(removeUsersId);
+
+    if (removeUsersId === selected) {
+      return setSelected([]);
+    }
+
+    const id = removeUsersId[0];
+
+    if (selected.includes(id)) setSelected(
+      removeSelectedItem(selected, id)
+    )
+  };
+
   // Modal Methods
 
   const onOpenModal = (user) => {
@@ -91,16 +105,14 @@ export default function UserTable(props) {
 
   // Dialog Methods
 
-  const onAgreeRemove = () => {
+  const closeDialog = () => {
     setOpenDialog(false);
-    props.onRemoveUser(removeUsersId);
-    if (removeUsersId === selected) setSelected([]);
     setRemoveUsersId(null);
   };
 
-  const onDisagreeRemove = () => {
-    setOpenDialog(false);
-    setRemoveUsersId(null);
+  const onAgreeRemove = () => {
+    closeDialog();
+    removeUsers();
   };
 
   const numSelected = selected.length;
@@ -149,7 +161,7 @@ export default function UserTable(props) {
         onSave={onSaveUser}
         onClose={onCloseModal}
       />
-      <Dialog open={openDialog} onClose={onDisagreeRemove}>
+      <Dialog open={openDialog} onClose={closeDialog}>
         <DialogContent>
           {
             removeUsersId?.length > 1 ?
@@ -158,7 +170,7 @@ export default function UserTable(props) {
           }
         </DialogContent>
         <DialogActions>
-          <Button onClick={onDisagreeRemove} autoFocus>Отмена</Button>
+          <Button onClick={closeDialog} autoFocus>Отмена</Button>
           <Button onClick={onAgreeRemove}>Удалить</Button>
         </DialogActions>
       </Dialog>

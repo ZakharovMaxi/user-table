@@ -25,6 +25,8 @@ const headers = [
 export default function TableHeader(props) {
   const {onSelectAll, numSelected, rowCount} = props;
 
+  console.log(numSelected)
+
   return (
     <TableHead>
       <TableRow>
